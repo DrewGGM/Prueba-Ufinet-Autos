@@ -1,0 +1,326 @@
+{
+	"info": {
+		"name": "Ufinet Autos API",
+		"description": "API REST para gestión de autos - Prueba Ufinet\n\nBase URL: http://localhost:8080/api/v1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080/api/v1"
+		},
+		{
+			"key": "token",
+			"value": ""
+		}
+	],
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Registrar usuario",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set('token', jsonData.token);",
+									"    pm.test('Token guardado', function() {",
+									"        pm.expect(jsonData.token).to.not.be.empty;",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"demo@ufinet.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/register",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "register"]
+						}
+					}
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set('token', jsonData.token);",
+									"    pm.test('Token guardado', function() {",
+									"        pm.expect(jsonData.token).to.not.be.empty;",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"demo@ufinet.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": ["{{baseUrl}}"],
+							"path": ["auth", "login"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Cars",
+			"item": [
+				{
+					"name": "Crear auto",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"brand\": \"Toyota\",\n    \"model\": \"Corolla\",\n    \"year\": 2024,\n    \"licensePlate\": \"ABC-1234\",\n    \"color\": \"Blanco\",\n    \"photoUrl\": \"https://example.com/corolla.jpg\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cars",
+							"host": ["{{baseUrl}}"],
+							"path": ["cars"]
+						}
+					}
+				},
+				{
+					"name": "Crear auto 2",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"brand\": \"Honda\",\n    \"model\": \"Civic\",\n    \"year\": 2023,\n    \"licensePlate\": \"XYZ-5678\",\n    \"color\": \"Negro\",\n    \"photoUrl\": null\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cars",
+							"host": ["{{baseUrl}}"],
+							"path": ["cars"]
+						}
+					}
+				},
+				{
+					"name": "Listar autos (paginado)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/cars?page=0&size=10&sortBy=brand&sortDirection=asc",
+							"host": ["{{baseUrl}}"],
+							"path": ["cars"],
+							"query": [
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "10" },
+								{ "key": "sortBy", "value": "brand" },
+								{ "key": "sortDirection", "value": "asc" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Buscar por placa o modelo",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/cars?search=corolla&page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["cars"],
+							"query": [
+								{ "key": "search", "value": "corolla" },
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "10" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Filtrar por marca",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/cars?brand=Toyota&page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["cars"],
+							"query": [
+								{ "key": "brand", "value": "Toyota" },
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "10" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Filtrar por año",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/cars?year=2024&page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["cars"],
+							"query": [
+								{ "key": "year", "value": "2024" },
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "10" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Filtrar por marca y año",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/cars?brand=Toyota&year=2024&page=0&size=10",
+							"host": ["{{baseUrl}}"],
+							"path": ["cars"],
+							"query": [
+								{ "key": "brand", "value": "Toyota" },
+								{ "key": "year", "value": "2024" },
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "10" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Obtener auto por ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/cars/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["cars", "1"]
+						}
+					}
+				},
+				{
+					"name": "Actualizar auto",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"brand\": \"Toyota\",\n    \"model\": \"Corolla Cross\",\n    \"year\": 2025,\n    \"licensePlate\": \"ABC-1234\",\n    \"color\": \"Rojo\",\n    \"photoUrl\": \"https://example.com/corolla-cross.jpg\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/cars/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["cars", "1"]
+						}
+					}
+				},
+				{
+					"name": "Eliminar auto",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/cars/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["cars", "1"]
+						}
+					}
+				}
+			]
+		}
+	]
+}
